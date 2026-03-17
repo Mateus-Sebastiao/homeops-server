@@ -1,0 +1,13 @@
+.git
+.gitignore
+
+README.md
+
+target
+
+*.log
+
+Dockerfile
+Dockerfile.dev
+
+docker-compose*.yaml
