@@ -39,11 +39,11 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:
 - OS: **0 critical** (distroless)
 - Java Dependencies: **8 critical** (Dependabot + Renovate can solve it)
 
-# Original Source Code Reference
+## Original Source Code Reference
 
 https://github.com/devnakka/Spring-Boot-Email-Thymeleaf
 
-# Original Source Code
+## Original Source Code
 
 https://github.com/Apress/Practical-GitOps
 
