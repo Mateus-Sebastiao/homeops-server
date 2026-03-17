@@ -31,12 +31,20 @@ docker build -t REGISTRY/YOUR_USERNAME/springboot_app-springboot:latest -f Docke
 docker push REGISTRY/YOUR_USERNAME/springboot_app-springboot:latest
 ```
 
+## Docker Variants
+
+Maintaining two Dockerfiles:
+
+- **Dockerfile.dev**: Alpine-baed JRE
+- **Dockerfile**: distroless Java 25
+
 ## Scan Security Vulnerability
 
 ```bash
 docker run -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy:0.69.3 image --timeout 30m REGISTRY/YOUR_USERNAME/springboot_app-springboot:latest
 ```
 - OS: **0 critical** (distroless)
+- OS: **1 critical** (alpine-based)
 - Java Dependencies: **8 critical** (Dependabot + Renovate can solve it)
 
 ## Original Source Code Reference
