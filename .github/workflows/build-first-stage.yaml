@@ -1,0 +1,27 @@
+name: Build (first stage on the pipeline lifecycle)
+
+on:
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Maven Build (cache)
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java plus Maven
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Build with Maven (no test yet)
+        run: mvn -B clean package -DskipTests --no-transfer-progress
