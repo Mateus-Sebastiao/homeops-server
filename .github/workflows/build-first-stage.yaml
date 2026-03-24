@@ -25,3 +25,4 @@ jobs:
 
       - name: Build with Maven (no test yet)
         run: mvn -B clean package -DskipTests --no-transfer-progress
+        working-directory: ./springboot_app
