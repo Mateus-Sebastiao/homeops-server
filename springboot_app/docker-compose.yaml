@@ -15,8 +15,7 @@ services:
   
   springboot:
     container_name: spring_boot
-    context: .
-    dockerfile: Dockerfile.dev
+    build: Dockerfile.dev
     depends_on:
       postgresdb:
         condition: service_healthy
@@ -27,4 +26,4 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
     ports:
-      - '8080:8080'
+      - '8082:8080'
