@@ -24,6 +24,11 @@
         <java.version>25</java.version>   <!-- Agora Java 25 -->
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
+
+		<!-- Forçar versões compatíveis com Java 25 -->
+		<spring-framework.version>6.2.3</spring-framework.version>
+		<spring-boot.version>3.4.2</spring-boot.version>
+		<asm.version>9.7</asm.version>                    <!-- Importante -->
     </properties>
 
     <dependencies>
@@ -91,6 +96,13 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
+
+		<!-- Forçar ASM compatível com Java 25 -->
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>9.7</version>
+		</dependency>
     </dependencies>
 
     <build>
@@ -99,6 +111,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.mateus.practical.homeops.GitopsApplication</mainClass>
+				</configuration>
             </plugin>
 
             <!-- JaCoCo Code Coverage -->
