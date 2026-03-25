@@ -7,6 +7,9 @@ on:
   #   branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Maven Build (cache)
@@ -20,7 +23,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '25'
           cache: 'maven'
 
       - name: Build with Maven
