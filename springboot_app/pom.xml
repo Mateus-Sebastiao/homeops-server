@@ -25,10 +25,11 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
 
-		<!-- Forçar versões compatíveis com Java 25 -->
-		<spring-framework.version>6.2.3</spring-framework.version>
+		<!-- Versões compatíveis com Java 25 -->
 		<spring-boot.version>3.4.2</spring-boot.version>
-		<asm.version>9.7</asm.version>                    <!-- Importante -->
+		<spring-framework.version>6.2.3</spring-framework.version>
+		<jacoco.version>0.8.13</jacoco.version>           <!-- Mais nova -->
+		<asm.version>9.7</asm.version>
     </properties>
 
     <dependencies>
@@ -101,7 +102,7 @@
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
-			<version>9.7</version>
+			<version>${asm.version}</version>
 		</dependency>
     </dependencies>
 
@@ -120,7 +121,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.13</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
