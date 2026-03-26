@@ -76,5 +76,5 @@ jobs:
           cache: 'maven'
 
       - name: Run Integration Tests
-        run: mvn -B verify -Pintegration-test -DskipUTs=true --no-transfer-progress
+        run: mvn -B verify -Pintegration-test -Dtest=*IntegrationTest -DskipUTs=true --no-transfer-progress
         working-directory: ./springboot_app
