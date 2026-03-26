@@ -23,7 +23,7 @@ class UserRepositoryIntegrationTest {
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test")
-            .withExposedPorts(5432);
+            .withStartupTimeoutSeconds(60);   // Dá mais tempo para o container subir
 
     @Autowired
     private UserRepository userRepository;
