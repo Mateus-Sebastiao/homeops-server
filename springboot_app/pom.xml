@@ -155,7 +155,10 @@
             </plugin>
         </plugins>
 
-		<profiles>
+        <finalName>${project.artifactId}</finalName>
+    </build>
+
+	<profiles>
 			<profile>
 				<id>integration-test</id>
 				<build>
@@ -177,8 +180,5 @@
 				</build>
 			</profile>
 		</profiles>
-
-        <finalName>${project.artifactId}</finalName>
-    </build>
 
 </project>
