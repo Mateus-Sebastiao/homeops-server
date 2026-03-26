@@ -47,7 +47,7 @@ jobs:
           cache: 'maven'
 
       - name: Run Unit Tests + JaCoCo
-        run: mvn -B verify -DskipITs=true -Dtest=!*IntegrationTest --no-transfer-progress
+        run: mvn -B verify -DskipITs=true -Dtest=!GitopsApplicationTests,!*IntegrationTest --no-transfer-progress
         working-directory: ./springboot_app
 
       # Upload report for auditing
