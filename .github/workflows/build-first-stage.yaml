@@ -11,70 +11,26 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Maven Build + Compile (cache)
+  build-and-test:
     runs-on: ubuntu-24.04
-    
     steps:
-      - name: Code checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - name: Setup Java plus Maven
-        uses: actions/setup-java@v5
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
 
-      - name: Build with Maven Compile
-        run: mvn -B clean compile --no-transfer-progress
-        working-directory: ./springboot_app
-  
-  unit-tests:
-    name: Unit Tests + JaCoCo
-    runs-on: ubuntu-24.04
-    needs: build
-    
-    steps:
-      - name: Code checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Java plus Maven
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
-
-      - name: Run Unit Tests + JaCoCo
-        run: mvn -B verify -DskipITs=true -Dtest=!GitopsApplicationTests,!*IntegrationTest -Dsurefire.failIfNoSpecifiedTests=false --no-transfer-progress
+      - name: Build and Run All Tests
+        # Corre unitários e integração de uma vez, gerando o relatório JaCoCo
+        run: mvn -B verify -Pintegration-test --no-transfer-progress
         working-directory: ./springboot_app
 
-      # Upload report for auditing
-      - name: Upload JaCoCo Report
+      - name: Upload Coverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
           path: springboot_app/target/site/jacoco/
-          retention-days: 1
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-24.04
-    needs: unit-tests
-    
-    steps:
-      - name: Code checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Java plus Maven
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'maven'
-
-      - name: Run Integration Tests
-        run: mvn -B verify -Pintegration-test -Dtest=*IntegrationTest -DskipUTs=true --no-transfer-progress
-        working-directory: ./springboot_app

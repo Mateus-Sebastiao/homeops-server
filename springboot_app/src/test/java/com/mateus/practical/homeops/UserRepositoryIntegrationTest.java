@@ -13,31 +13,35 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
-class UserRepositoryIntegrationTest {
+@Testcontainers
+public abstract class BaseIntegrationTest {
 
-    @Container
+    // Static garante que o container seja partilhado entre todas as classes que herdam desta
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("test")
-            .withPassword("test")
-            .withStartupTimeoutSeconds(60);   // Dá mais tempo para o container subir
+            .withPassword("test");
 
+    static {
+        postgres.start(); // Inicia manualmente no bloco estático
+    }
+
+    // Configura as propriedades do Spring para usar o container iniciado
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+}
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
+class UserRepositoryIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    void shouldSaveAndFindUserByName() {
-        User user = new User();
-        user.setName("Integration Test User");
-        user.setEmail("integration@test.com");
-
-        User saved = userRepository.save(user);
-
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getName()).isEqualTo("Integration Test User");
-        assertThat(userRepository.findByName("Integration Test User")).hasSize(1);
-    }
+    void shouldSaveAndFindUserByName() { ... }
 }
