@@ -26,21 +26,15 @@ class UserRepositoryIntegrationTest {
     private UserRepository userRepository;
 
     @Test
-    void shouldSaveAndRetrieveUser() {
-        // Given
+    void shouldSaveAndFindUser() {
         User user = new User();
-        user.setName("Mateus Test");
-        user.setEmail("mateus.integration@test.com");
+        user.setName("Integration Test User");
+        user.setEmail("integration@test.com");
 
-        // When
-        User savedUser = userRepository.save(user);
+        User saved = userRepository.save(user);
 
-        // Then
-        assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.getName()).isEqualTo("Mateus Test");
-        assertThat(savedUser.getEmail()).isEqualTo("mateus.integration@test.com");
-
-        // Verify findByName works
-        assertThat(userRepository.findByName("Mateus Test")).hasSize(1);
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getName()).isEqualTo("Integration Test User");
+        assertThat(userRepository.findByName("Integration Test User")).isNotEmpty();
     }
 }
