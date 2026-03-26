@@ -53,27 +53,28 @@ jobs:
       # Upload report for auditing
       - name: Upload JaCoCo Report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: coverage-report
           path: springboot_app/target/site/jacoco/
           retention-days: 1
 
-  # integration-tests:
-  #   name: Integration Tests
-  #   runs-on: ubuntu-24.04
-  #   needs: unit-tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-24.04
+    needs: unit-tests
     
-  #   steps:
-  #     - name: Code checkout
-  #       uses: actions/checkout@v5
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
 
-  #     - name: Setup Java plus Maven
-  #       uses: actions/setup-java@v5
-  #       with:
-  #         distribution: 'temurin'
-  #         java-version: '21'
-  #         cache: 'maven'
+      - name: Setup Java plus Maven
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
 
-  #     - name: Run Integration Tests
-  #       run: mvn -B verify -Pintegration-test -DskipUTs=true --no-transfer-progress
-  #       working-directory: ./springboot_app
+      - name: Run Integration Tests
+        run: mvn -B verify -Pintegration-test -DskipUTs=true --no-transfer-progress
+        working-directory: ./springboot_app
