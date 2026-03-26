@@ -31,7 +31,12 @@ class UserRepositoryIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        // FORÇA O DRIVER CORRETO (Resolve o erro "Driver claims to not accept jdbcUrl")
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+        // GARANTE O DIALETO POSTGRES
+        registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
     }
+
 
     @Autowired
     private UserRepository userRepository;

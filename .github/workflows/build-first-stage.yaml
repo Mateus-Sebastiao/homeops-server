@@ -23,17 +23,16 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # STEP 1: Compilação e Testes Unitários (Rápido)
-      # Aqui o Maven usará o H2 definido no application-test.properties
-      - name: Unit Tests & Compile
-        run: mvn clean test -Dtest="!*IntegrationTest"
+      # Roda Unit Tests com H2 (Rápido)
+      - name: Unit Tests
+        run: mvn test -Dtest="!*IntegrationTest"
         working-directory: ./springboot_app
 
-      # STEP 2: Testes de Integração (Docker com Testcontainers)
-      # Só corre se os unitários passarem.
+      # Roda Integration Tests com Testcontainers (Postgres real)
       - name: Integration Tests
         run: mvn verify -Pintegration-test -Dtest="*IntegrationTest"
         working-directory: ./springboot_app
+
 
       # STEP 3: Verificação de Qualidade (JaCoCo)
       - name: Upload Report
