@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    name: Maven Build (cache)
+    name: Maven Build + Compile (cache)
     runs-on: ubuntu-24.04
     
     steps:
@@ -26,8 +26,28 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn -B clean verify --no-transfer-progress
+      - name: Build with Maven Compile
+        run: mvn -B clean compile --no-transfer-progress
+        working-directory: ./springboot_app
+  
+  unit-tests:
+    name: Unit Tests + JaCoCo
+    runs-on: ubuntu-24.04
+    needs: build
+    
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Java plus Maven
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Run Unit Tests + JaCoCo
+        run: mvn -B verify -DskipITs=true --no-transfer-progress
         working-directory: ./springboot_app
 
       # Upload report for auditing
@@ -37,3 +57,23 @@ jobs:
           name: coverage-report
           path: springboot_app/target/site/jacoco/
           retention-days: 1
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-24.04
+    needs: unit-tests
+    
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Java plus Maven
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Run Integration Tests
+        run: mvn -B verify -DskipUTs=true --no-transfer-progress
+        working-directory: ./springboot_app
