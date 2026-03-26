@@ -12,23 +12,31 @@ permissions:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '21'
+          distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build and Run All Tests
-        # Corre unitários e integração de uma vez, gerando o relatório JaCoCo
-        run: mvn -B verify -Pintegration-test --no-transfer-progress
+      # STEP 1: Compilação e Testes Unitários (Rápido)
+      # Aqui o Maven usará o H2 definido no application-test.properties
+      - name: Unit Tests & Compile
+        run: mvn clean test -Dtest="!*IntegrationTest"
         working-directory: ./springboot_app
 
-      - name: Upload Coverage
+      # STEP 2: Testes de Integração (Docker com Testcontainers)
+      # Só corre se os unitários passarem.
+      - name: Integration Tests
+        run: mvn verify -Pintegration-test -Dtest="*IntegrationTest"
+        working-directory: ./springboot_app
+
+      # STEP 3: Verificação de Qualidade (JaCoCo)
+      - name: Upload Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
