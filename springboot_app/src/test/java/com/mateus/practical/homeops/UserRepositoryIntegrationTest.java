@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -13,35 +15,37 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-@Testcontainers
-public abstract class BaseIntegrationTest {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
+class UserRepositoryIntegrationTest {
 
-    // Static garante que o container seja partilhado entre todas as classes que herdam desta
+    @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");
 
-    static {
-        postgres.start(); // Inicia manualmente no bloco estático
-    }
-
-    // Configura as propriedades do Spring para usar o container iniciado
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
-}
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
-class UserRepositoryIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    void shouldSaveAndFindUserByName() { ... }
+    void shouldSaveAndFindUserByName() {
+        User user = new User();
+        user.setName("Integration Test User");
+        user.setEmail("integration@test.com");
+
+        User saved = userRepository.save(user);
+
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getName()).isEqualTo("Integration Test User");
+        assertThat(userRepository.findByName("Integration Test User")).hasSize(1);
+    }
 }
