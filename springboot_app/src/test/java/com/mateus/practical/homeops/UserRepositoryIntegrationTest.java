@@ -22,13 +22,14 @@ class UserRepositoryIntegrationTest {
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("test")
-            .withPassword("test");
+            .withPassword("test")
+            .withExposedPorts(5432);
 
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    void shouldSaveAndFindUser() {
+    void shouldSaveAndFindUserByName() {
         User user = new User();
         user.setName("Integration Test User");
         user.setEmail("integration@test.com");
@@ -37,6 +38,6 @@ class UserRepositoryIntegrationTest {
 
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getName()).isEqualTo("Integration Test User");
-        assertThat(userRepository.findByName("Integration Test User")).isNotEmpty();
+        assertThat(userRepository.findByName("Integration Test User")).hasSize(1);
     }
 }
