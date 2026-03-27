@@ -45,7 +45,8 @@ jobs:
           path: springboot_app/target/site/jacoco/
 
       - name: SonarQube Analysis
-        run: mvn -B verify sonar:sonar -Dsonar.token=$SONAR_TOKEN -Dsonar.host.url=https://sonarcloud.io
         working-directory: ./springboot_app
+        run: mvn -B verify sonar:sonar -Psonar --no-transfer-progress
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
