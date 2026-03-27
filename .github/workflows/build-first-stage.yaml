@@ -59,7 +59,7 @@ jobs:
           format: 'table'
           exit-code: '1'           # Fail the build on CRITICAL or HIGH
           severity: 'CRITICAL,HIGH'
-          ignore-file: '.trivyignore'
+          trivyignores: '.trivyignore'
 
       - name: Build Docker Image for Scan
         run: docker build -f Dockerfile -t springboot_app:latest .
