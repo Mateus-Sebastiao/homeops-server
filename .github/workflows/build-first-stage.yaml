@@ -80,10 +80,6 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
 
-      - name: Build JAR
-        working-directory: ./springboot_app
-        run: mvn -B clean package -DskipTests --no-transfer-progress
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       

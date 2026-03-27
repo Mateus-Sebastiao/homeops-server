@@ -1,13 +1,11 @@
 .git
-.gitignore
-
+.github
 README.md
-
-target
-
+*.md
 *.log
-
-Dockerfile
 Dockerfile.dev
-
 docker-compose*.yaml
+
+# Ignora tudo do Maven, exceto o JAR final
+target/
+!target/*.jar
