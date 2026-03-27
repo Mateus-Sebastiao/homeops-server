@@ -50,3 +50,12 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trivy Filesystem Scan (code + dependencies)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './springboot_app'
+          format: 'table'
+          exit-code: '1'           # Fail the build on CRITICAL or HIGH
+          severity: 'CRITICAL,HIGH'
