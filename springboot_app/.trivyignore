@@ -1,0 +1,23 @@
+# Vulnerabilidades conhecidas - serão tratadas via Dependabot/Renovate ou atualização de Spring Boot
+# Justificativa: Dependências transitivas do Spring Boot 3.4.2 + Tomcat embedded
+
+# Jackson
+GHSA-72hv-8253-57qq
+
+# Tomcat vulnerabilities (mais críticas)
+CVE-2025-24813
+CVE-2025-48988
+CVE-2025-48989
+CVE-2025-52520
+CVE-2025-53506
+CVE-2025-55752
+
+# Spring Boot / Spring Core
+CVE-2025-22235
+CVE-2025-41249
+
+# PostgreSQL driver
+CVE-2025-49146
+
+# Ignorar temporariamente até atualização completa das dependências
+# Remover itens deste arquivo conforme atualizarmos versões

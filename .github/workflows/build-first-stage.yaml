@@ -59,3 +59,16 @@ jobs:
           format: 'table'
           exit-code: '1'           # Fail the build on CRITICAL or HIGH
           severity: 'CRITICAL,HIGH'
+          ignore-file: '.trivyignore'
+
+      - name: Build Docker Image for Scan
+        run: docker build -f Dockerfile -t springboot_app:latest .
+        working-directory: ./springboot_app
+
+      - name: Trivy Docker Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'springboot_app:latest'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
