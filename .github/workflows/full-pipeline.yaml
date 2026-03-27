@@ -7,16 +7,40 @@ on:
   #   branches: [ main ]
   workflow_dispatch:
 
+# Security: least privilege + concurrency
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-and-test:
+  # ==============================================================
+  # JOB 1: Secret Scanning (Gitleaks)
+  # ==============================================================
+  gitleaks:
+    name: Gitleaks (Secret Scanning)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ==============================================================
+  # JOB 2: Tests (Unit + Integration)
+  # ==============================================================
+  tests:
+    name: Tests (Unit + Integration)
+    runs-on: ubuntu-latest
+    needs: gitleaks
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -25,30 +49,37 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Login to Docker Registry
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # Roda Unit Tests com H2 (Rápido)
       - name: Unit Tests
         run: mvn test -Dtest="!*IntegrationTest"
         working-directory: ./springboot_app
 
-      # Roda Integration Tests com Testcontainers (Postgres real)
       - name: Integration Tests
         run: mvn verify -Pintegration-test -Dtest="*IntegrationTest"
         working-directory: ./springboot_app
 
-
-      # STEP 3: Verificação de Qualidade (JaCoCo)
       - name: Upload Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
           path: springboot_app/target/site/jacoco/
+
+  # ==============================================================
+  # JOB 3: SAST + SCA (SonarQube + Trivy FS)
+  # ==============================================================
+  security-scans:
+    name: SAST + SCA (Sonar + Trivy FS)
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: SonarQube Analysis
         working-directory: ./springboot_app
@@ -67,9 +98,32 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivyignores: '.trivyignore'
 
+  # ==============================================================
+  # JOB 4: Build JAR + Docker Image + Scans + Push
+  # ==============================================================
+  build-and-test:
+    name: Build JAR + Docker + Image Scan + Push
+    runs-on: ubuntu-latest
+    needs: [security-scans]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
       - name: Build Docker Image for Scan
         run: docker build -f Dockerfile -t springboot_app:latest .
         working-directory: ./springboot_app
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Trivy Docker Image Scan
         uses: aquasecurity/trivy-action@master
@@ -94,3 +148,7 @@ jobs:
           tags: |
             ${{ vars.DOCKERHUB_USERNAME }}/springboot_app:latest
             ${{ vars.DOCKERHUB_USERNAME }}/springboot_app:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: mode=max
+          sbom: true
