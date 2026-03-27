@@ -131,7 +131,7 @@
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -183,9 +183,10 @@
                 <id>sonar</id>
                 <properties>
                     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                    <sonar.organization>HomeOps Platform</sonar.organization>
-                    <sonar.projectKey>homeops-platform</sonar.projectKey>
-                    <sonar.projectName>homeops-server</sonar.projectName>
+                    <sonar.organization>mateus-sebastiao</sonar.organization>
+                    <sonar.projectKey>Mateus-Sebastiao_homeops-server</sonar.projectKey>
+                    <sonar.projectName>HomeOps Platform</sonar.projectName>
+                    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
                 </properties>
             </profile>
 		</profiles>

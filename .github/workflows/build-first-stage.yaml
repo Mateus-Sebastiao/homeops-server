@@ -46,7 +46,7 @@ jobs:
 
       - name: SonarQube Analysis
         working-directory: ./springboot_app
-        run: mvn -B verify sonar:sonar -Psonar --no-transfer-progress
+        run: mvn -B verify sonar:sonar -Psonar -Dsonar.token=$SONAR_TOKEN --no-transfer-progress
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
