@@ -68,7 +68,7 @@ jobs:
           trivyignores: '.trivyignore'
 
       - name: Build Docker Image for Scan
-        run: docker build -f Dockerfile -t springboot_app:latest .
+        run: docker build -f Dockerfile.prod -t springboot_app:latest .
         working-directory: ./springboot_app
 
       - name: Trivy Docker Image Scan
