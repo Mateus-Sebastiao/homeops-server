@@ -183,9 +183,9 @@
                 <id>sonar</id>
                 <properties>
                     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                    <sonar.organization>Mateus-Sebastiao</sonar.organization>
-                    <sonar.projectKey>Mateus-Sebastiao_homeops-server</sonar.projectKey>
-                    <sonar.projectName>HomeOps Platform</sonar.projectName>
+                    <sonar.organization>HomeOps Platform</sonar.organization>
+                    <sonar.projectKey>homeops-platform</sonar.projectKey>
+                    <sonar.projectName>homeops-server</sonar.projectName>
                 </properties>
             </profile>
 		</profiles>
