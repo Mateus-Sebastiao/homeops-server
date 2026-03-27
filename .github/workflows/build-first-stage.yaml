@@ -22,6 +22,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
+          fetch-depth: 0
 
       # Roda Unit Tests com H2 (Rápido)
       - name: Unit Tests
@@ -41,3 +42,9 @@ jobs:
         with:
           name: coverage-report
           path: springboot_app/target/site/jacoco/
+
+      - name: SonarQube Analysis
+        run: mvn -B verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=https://sonarcloud.io
+        working-directory: ./springboot_app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
